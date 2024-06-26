@@ -1,0 +1,43 @@
+# docker-compose.yml TODO: Fazer um entrypoint para ja rodar migrate, collectstatic, etc..
+
+version: '3.9'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    build: .
+    command: celery -A b3tracker worker --loglevel=info --beat
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 54310:5432
+    environment:
+      POSTGRES_DB: b3tracker_local
+      POSTGRES_USER: b3tracker_user
+      POSTGRES_PASSWORD: abc123
+    
+  redis:
+    image: redis:latest
+
+volumes:
+  postgres_data:
