@@ -72,6 +72,15 @@ class TrackerView(APIView):
 # TODO: View para listar os preços armazenados dos ativos
 # TODO: View para listar todos os ativos da B3 para o usuario escolher quais ele quer monitorar
 
-class TestView(APIView):
+class TaskDebugView(APIView):
     def get(self, request):
-        return Response({"msg": "api ok!"})
+        
+        tasks_list = current_app.control.inspect()
+
+        resp = {
+            "scheduled": tasks_list.scheduled(),
+            "active": tasks_list.active(),
+            "reserved": tasks_list.reserved(),
+        }
+
+        return Response(resp)
