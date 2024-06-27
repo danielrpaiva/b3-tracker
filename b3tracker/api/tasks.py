@@ -1,14 +1,18 @@
 import time
 import logging
 import math
+import os
 
 from datetime import datetime
 from celery import shared_task
 from .models import OrderQuote
 from .serializers import TrackOrderBasicSerializer
 from .api_connections.brapi_connector import BrapiApi
+from django.core.mail import send_mail
 
-# TODO: Iniciar o worker quando iniciar o servidor django! Usar docker? supervisor?
+
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+
 
 @shared_task(bind=True)
 def track_b3(self, order, email):
@@ -42,10 +46,28 @@ def track_b3(self, order, email):
             curr_quote.save()
 
             if curr_price < saved_order.buy_limit:
-                pass # TODO: Disparar email
+                msg = f"""
+                O ativo {saved_order.ticker_code} cruzou o limite inferior de {saved_order.buy_limit} 
+                atingindo {curr_price} representando boa oportunidade de compra!
+                """
+                send_mail(
+                    "Oportunidade de compra de ativo!",
+                    msg,
+                    EMAIL_HOST_USER,
+                    [email]
+                )
 
             if curr_price > saved_order.sell_limit:
-                pass # TODO: Disparar email
+                msg = f"""
+                O ativo {saved_order.ticker_code} cruzou o limite superior de {saved_order.sell_limit} 
+                atingindo {curr_price} representando boa oportunidade de venda!
+                """
+                send_mail(
+                    "Oportunidade de venda de ativo!",
+                    msg,
+                    EMAIL_HOST_USER,
+                    [email]
+                )
 
             iteration_count += 1
 
