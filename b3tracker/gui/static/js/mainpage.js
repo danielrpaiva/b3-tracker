@@ -58,45 +58,45 @@ const getCookie = (name) => {
 }
 
 $(document).ready(() => {
-    $("#get-history").click(() => {
-
-        const email = $("#email-input").val();
-
-        if (validateEmail(email)) {
-            $.ajax({
-                url: `/api/trackers?email=${email}`,
-                type: "GET",
-                success: (response) => {
-                    
-                    // $("#fill-email-div").hide();
-                    // $("#tracker-history-table").show();
-                    
-                    $("#price-history").html("");
-
-                    response.quotes.forEach((item) => {
-                        $("#price-history").append(
-                            `
-                            <tr>
-                                <td>${item.requester_email}</td>
-                                <td>${item.ticker_code}</td>
-                                <td>${item.quote_price}</td>
-                                <td>${item.task_id}</td>
-                            </tr>
-                            `
-                        );
-                    });
-                },
-                error: (xhr, status, error) => {
-                    console.error(`Ocorreu um erro: ${status} ${error}`);
-                }
-            });
-        } else {
-            alert("Por favor, insira um endereço de e-mail válido.");
-        }
-    });
-
     populateSelect($("#ticker-select-1"));
-    
+});
+
+// Botão para buscar histórico de preços
+$("#get-history").click(() => {
+
+    const email = $("#email-input").val();
+
+    if (validateEmail(email)) {
+        $.ajax({
+            url: `/api/trackers?email=${email}`,
+            type: "GET",
+            success: (response) => {
+                
+                // $("#fill-email-div").hide();
+                // $("#tracker-history-table").show();
+                
+                $("#price-history").html("");
+
+                response.quotes.forEach((item) => {
+                    $("#price-history").append(
+                        `
+                        <tr>
+                            <td>${item.requester_email}</td>
+                            <td>${item.ticker_code}</td>
+                            <td>${item.quote_price}</td>
+                            <td>${item.task_id}</td>
+                        </tr>
+                        `
+                    );
+                });
+            },
+            error: (xhr, status, error) => {
+                console.error(`Ocorreu um erro: ${status} ${error}`);
+            }
+        });
+    } else {
+        alert("Por favor, insira um endereço de e-mail válido.");
+    }
 });
 
 // Botão adicionar ativo
@@ -141,7 +141,7 @@ $("#track-data").on("click", "[id^=start-track-]", function(event) {
     const formNum = currButtonId[currButtonId.length - 1];
     
     const email = $("#email-input").val();
-    const ticker =$(`#ticker-select-${formNum}`).val();
+    const ticker = $(`#ticker-select-${formNum}`).val();
     const minEl = Number($(`#min-value-${formNum}`).val());
     const maxEl = Number($(`#max-value-${formNum}`).val());
     const freq = Number($(`#frequency-${formNum}`).val());
@@ -192,4 +192,21 @@ $("#track-data").on("click", "[id^=stop-track-]", function(event) {
     event.preventDefault();
     
     const currButtonId = $(this).attr('id');
+    const formNum = currButtonId[currButtonId.length - 1];
+    const currTrackId = $(`#track-id-${formNum}`).val();
+
+    $.ajax({
+        url: `/api/trackers/${currTrackId}`,
+        type: "PUT",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        success: (response) => {
+            $(`#track-id-${formNum}`).val("");
+            console.log(response.task, "Interrompido!")
+        },
+        error: (xhr, status, error) => {
+            console.error(`Ocorreu um erro: ${status} ${error}`);
+        }
+    });
 });

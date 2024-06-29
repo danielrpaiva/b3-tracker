@@ -57,7 +57,7 @@ class TrackerView(APIView):
             curr_order.is_active = False
             curr_order.save()
 
-            return Response({"message": "Monitoramento interrompido!", "task_id": task_id}, status=status.HTTP_200_OK)
+            return Response({"message": "Monitoramento interrompido!", "task": task_id}, status=status.HTTP_200_OK)
         
         except TrackOrder.DoesNotExist as e:
             return Response({"message": f"TrackOrder não encontrado com o task_id: {task_id}"}, status=status.HTTP_400_BAD_REQUEST)
