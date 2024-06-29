@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from .tasks import track_b3
 from .models import TrackOrder, OrderQuote
 from .serializers import TrackOrderBasicSerializer, OrderQuoteListSerializer
@@ -9,23 +11,20 @@ from celery import current_app
 
 import logging
 
-# Create your views here.
+@method_decorator(csrf_exempt, name="dispatch")
 class TrackerView(APIView):
     """
     POST:
     Inicia o monitoramento dos ativos passados no payload
     Payload:
     {
-        "email": "requester-email@gmail.com"
-        "orders":[
-            {
-                "ticker_code": "PETR3",
-                "buy_limit": 30,
-                "sell_limit": 40,
-                "frequency": 5,
-            },
-            ...
-        ]
+        "email": "requester-email@gmail.com",
+        "order_data":{
+            "ticker_code": "PETR3",
+            "buy_limit": 30,
+            "sell_limit": 40,
+            "frequency": 5,
+        }, 
     }
 
     PUT:
@@ -38,16 +37,11 @@ class TrackerView(APIView):
         try:
             payload = request.data
             email = payload["email"]
+            order_data = payload["order_data"]
             
-            created_tasks = list()
-
-            for order in payload["orders"]:
-                task = track_b3.apply_async(args=[order, email])
-                created_tasks.append(task.id)
-
-            track_orders = TrackOrder.objects.filter(task_id=created_tasks)
-
-            return Response(TrackOrderBasicSerializer(instance=track_orders, many=True).data, status=status.HTTP_201_CREATED)
+            task = track_b3.apply_async(args=[order_data, email])
+            
+            return Response({"task": task.id}, status=status.HTTP_201_CREATED)
         
         except Exception as e:
             logging.exception(str(e))
@@ -63,7 +57,7 @@ class TrackerView(APIView):
             curr_order.is_active = False
             curr_order.save()
 
-            return Response({"message": "Monitoramento interrompido!", "task_id": task_id}, status=status.HTTP_200_OK)
+            return Response({"message": "Monitoramento interrompido!", "task": task_id}, status=status.HTTP_200_OK)
         
         except TrackOrder.DoesNotExist as e:
             return Response({"message": f"TrackOrder não encontrado com o task_id: {task_id}"}, status=status.HTTP_400_BAD_REQUEST)
@@ -97,6 +91,10 @@ class TrackerView(APIView):
 
             if max_price_param:
                 curr_order_quotes = curr_order_quotes.filter(quote_price__lte=max_price_param)
+
+            curr_order_quotes = curr_order_quotes.order_by("-id")
+
+            # TODO: Paginar essa view
             
             resp_data = {
                 "quotes": OrderQuoteListSerializer(instance=curr_order_quotes, many=True).data
