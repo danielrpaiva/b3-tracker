@@ -11,9 +11,38 @@
 </head>
 <body>
     <h1>B3 Tracker</h1>
-    <button id="get-history">Buscar dados</button>
     
-    <table class="table table-striped" >
+    <h3>Digite o seu email para iniciar:</h3>
+
+    <div id="fill-email-div">
+        <input type="email" id="email-input" class="form-control" placeholder="Digite o seu email" required>
+        <button id="get-history" class="btn btn-primary mt-2">Buscar dados</button>
+    </div>
+
+    <br>
+    <form action="" id="track-data">
+        <div id="ticker-form-fields">
+            <div class="form-group" id="select-form-group-1">
+                <select name="ticker-select-1" id="ticker-select-1" form="track-data">
+                </select>
+                
+                <label for="min-value-1">Valor Mínimo:</label>
+                <input type="number" id="min-value-1" name="min-value-1" min="1" max="999">
+                
+                <label for="max-value-1">Valor Máximo:</label>
+                <input type="number" id="max-value-1" name="max-value-1" min="1" max="999">
+        
+                <label for="frequency-1">Periodicidade (em minutos):</label>
+                <input type="number" id="frequency-1" name="frequency-1" min="1" max="60">
+            </div>
+        </div>
+    </form>
+
+    <button id="add-select-btn" class="btn btn-primary mt-2">Adicionar ativo</button>
+
+    <br>
+    
+    <table class="table table-striped" id="tracker-history-table">
         <thead>
           <tr>
             <th scope="col">Email do requerente</th>

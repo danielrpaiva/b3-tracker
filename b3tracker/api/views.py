@@ -97,6 +97,10 @@ class TrackerView(APIView):
 
             if max_price_param:
                 curr_order_quotes = curr_order_quotes.filter(quote_price__lte=max_price_param)
+
+            curr_order_quotes = curr_order_quotes.order_by("-id")
+
+            # TODO: Paginar essa view
             
             resp_data = {
                 "quotes": OrderQuoteListSerializer(instance=curr_order_quotes, many=True).data
