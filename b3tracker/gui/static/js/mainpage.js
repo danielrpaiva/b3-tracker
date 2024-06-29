@@ -23,14 +23,46 @@ const populateSelect = (selectElement) => {
     });
 }
 
+// Função para avaliar se o email está preenchido e é válido
+const validateEmail = (email) => {
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //Validar se o texto tem formato de email mesmo
+    return emailRe.test(email)
+}
+
+// Função para validar se os valores de monitoramento fazem sentido
+const validateTrackData = (minEl, maxEl, freq) => {
+    const minRange = minEl >= 1 && minEl <= 999;
+    const maxRange = maxEl >= 1 && maxEl <= 999;
+    const freqRange = freq >= 1 && freq <= 60;
+    const maxLogic = maxEl > minEl;
+    return minRange && maxRange && freqRange && maxLogic;
+}
+
+/*
+Buscar csrf token, foi necessário pois tomava 403 ao realizar o POST 
+e o decorator do django para isso não estava funcionando 
+*/
+const getCookie = (name) => {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 $(document).ready(() => {
     $("#get-history").click(() => {
 
         const email = $("#email-input").val();
-        
-        const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //Validar se o texto tem formato de email mesmo
 
-        if (emailRe.test(email)) {
+        if (validateEmail(email)) {
             $.ajax({
                 url: `/api/trackers?email=${email}`,
                 type: "GET",
@@ -67,6 +99,7 @@ $(document).ready(() => {
     
 });
 
+// Botão adicionar ativo
 $("#add-select-btn").click(() => {
 
     const formGroupCount = $(".form-group").length;
@@ -84,6 +117,12 @@ $("#add-select-btn").click(() => {
     
             <label for="frequency-${formGroupCount + 1}">Periodicidade (em minutos):</label>
             <input type="number" id="frequency-${formGroupCount + 1}" name="frequency-${formGroupCount + 1}" min="1" max="60">
+            
+            <button id="start-track-${formGroupCount + 1}" class="btn btn-success">Iniciar</button>
+            <button id="stop-track-${formGroupCount + 1}" class="btn btn-danger">Parar</button>
+
+            <label for="track-id-${formGroupCount + 1}">ID:</label>
+            <input id="track-id-${formGroupCount + 1}" class="form-control" name="track-id-${formGroupCount + 1}" type="text" placeholder="Aguardando início..." readonly />
         </div>
     `);
 
@@ -92,4 +131,65 @@ $("#add-select-btn").click(() => {
     $("#ticker-form-fields").append(newFormGroup);
 
     populateSelect(newFormGroup.find("select"));
+});
+
+//Botões de iniciar
+$("#track-data").on("click", "[id^=start-track-]", function(event) {
+    event.preventDefault();
+    
+    const currButtonId = $(this).attr('id');
+    const formNum = currButtonId[currButtonId.length - 1];
+    
+    const email = $("#email-input").val();
+    const ticker =$(`#ticker-select-${formNum}`).val();
+    const minEl = Number($(`#min-value-${formNum}`).val());
+    const maxEl = Number($(`#max-value-${formNum}`).val());
+    const freq = Number($(`#frequency-${formNum}`).val());
+
+    if (validateTrackData(minEl, maxEl, freq) && validateEmail(email)) {
+        //console.log("Funfou!", currButtonId, formNum, minEl, maxEl, freq, ticker);
+        const payload = {
+            "email": email,
+            "order_data":{
+                "ticker_code": ticker,
+                "buy_limit": minEl,
+                "sell_limit": maxEl,
+                "frequency": freq,
+            }
+        }
+
+        $.ajax({
+            url: `/api/trackers`,
+            type: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: (response) => {
+                $(`#track-id-${formNum}`).val(response.task);
+            },
+            error: (xhr, status, error) => {
+                console.error(`Ocorreu um erro: ${status} ${error}`);
+            }
+        });
+
+    } else {
+        // TODO: Trocar o alert por um modal mais bonito
+        alert(`
+            Insira valores válidos:
+            * É necessário informar um email
+            * Preço mínimo: 1 até 999
+            * Preço máximo: 1 até 999
+            * Periodicidade: 1 até 60
+            * Preço máximo maior do que o mínimo
+        `);
+    }
+});
+
+//Botões de parar
+$("#track-data").on("click", "[id^=stop-track-]", function(event) {
+    event.preventDefault();
+    
+    const currButtonId = $(this).attr('id');
 });

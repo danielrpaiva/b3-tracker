@@ -1,5 +1,7 @@
 {% load static %}
 
+<!-- TODO: Interromper monitoramento se o usuario recarregar a pagina ou fechar a aba -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,11 +36,17 @@
         
                 <label for="frequency-1">Periodicidade (em minutos):</label>
                 <input type="number" id="frequency-1" name="frequency-1" min="1" max="60">
+
+                <button id="start-track-1" class="btn btn-success">Iniciar</button>
+                <button id="stop-track-1" class="btn btn-danger">Parar</button>
+
+                <label for="track-id-1">ID:</label>
+                <input id="track-id-1" class="form-control" name="track-id-1" type="text" placeholder="Aguardando início..." readonly />
             </div>
         </div>
     </form>
 
-    <button id="add-select-btn" class="btn btn-primary mt-2">Adicionar ativo</button>
+    <button id="add-select-btn" class="btn btn-primary">Adicionar ativo</button>
 
     <br>
     
