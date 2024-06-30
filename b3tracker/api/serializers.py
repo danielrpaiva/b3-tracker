@@ -34,4 +34,5 @@ class OrderQuoteListSerializer(serializers.ModelSerializer):
             "ticker_code",
             "task_id",
             "requester_email",
+            "created_at",
         ]

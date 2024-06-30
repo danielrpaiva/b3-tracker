@@ -1,3 +1,79 @@
-/* body{
-    background-color: #585450;
-} */
+body {
+    background-color: #caced1;
+}
+
+.custom-card {
+    background-color: #0c5c8c;
+    color: antiquewhite;
+    width: 1700px;
+    place-self: center;
+    padding: 30px;
+    margin-left: 50px;
+    align-content: center;
+}
+
+.custom-input {
+    width: 100px;
+    margin-right: 25px;
+    margin-left: 5px;
+}
+
+.custom-select {
+    width: 150px;
+    margin-right: 25px;
+    margin-left: 5px;
+}
+
+.custom-input-readonly {
+    width: 350px;
+    margin-left: 5px;
+}
+
+.custom-form-start-button {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.custom-form-stop-button {
+    margin-right: 25px;
+    margin-left: 5px;
+}
+
+.custom-label {
+    text-emphasis: bold;
+    align-self: center;
+    font-size: 1.2rem;
+}
+
+.custom-table {
+    margin-top: 15px;
+    margin-right: 50px;
+    margin-left: 50px;
+    width: 1700px;
+}
+
+.custom-add-button {
+    margin-left: 50px;
+    margin-bottom: 2px;
+}
+
+.custom-history-button {
+    margin-top: 40px;
+    margin-left: 50px;
+}
+
+#email-input {
+    margin-left: 50px;
+    width: 500px;
+}
+
+.custom-instructions {
+    margin-left: 50px;
+    margin-top: 30px;
+}
+
+.custom-title {
+    margin-top: 30px;
+    align-self: center;
+    text-align: center;
+}

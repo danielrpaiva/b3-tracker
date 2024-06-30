@@ -31,9 +31,9 @@ const validateEmail = (email) => {
 
 // Função para validar se os valores de monitoramento fazem sentido
 const validateTrackData = (minEl, maxEl, freq) => {
-    const minRange = minEl >= 1 && minEl <= 999;
-    const maxRange = maxEl >= 1 && maxEl <= 999;
-    const freqRange = freq >= 1 && freq <= 60;
+    const minRange = minEl >= 0 && minEl <= 9999;
+    const maxRange = maxEl >= 0 && maxEl <= 9999;
+    const freqRange = freq >= 0.5 && freq <= 60;
     const maxLogic = maxEl > minEl;
     return minRange && maxRange && freqRange && maxLogic;
 }
@@ -85,6 +85,7 @@ $("#get-history").click(() => {
                             <td>${item.ticker_code}</td>
                             <td>${item.quote_price}</td>
                             <td>${item.task_id}</td>
+                            <td>${item.created_at}</td>
                         </tr>
                         `
                     );
@@ -106,23 +107,27 @@ $("#add-select-btn").click(() => {
 
     const newFormGroupId = `select-form-group-${formGroupCount + 1}`;
     const newFormGroup = $(`
-        <div class="form-group" id="${newFormGroupId}">
-            <select name="ticker-select-${formGroupCount + 1}" id="ticker-select-${formGroupCount + 1}" form="track-data"></select>
-            
-            <label for="min-value-${formGroupCount + 1}">Valor Mínimo:</label>
-            <input type="number" id="min-value-${formGroupCount + 1}" name="min-value-${formGroupCount + 1}" min="1" max="999">
-            
-            <label for="max-value-${formGroupCount + 1}">Valor Máximo:</label>
-            <input type="number" id="max-value-${formGroupCount + 1}" name="max-value-${formGroupCount + 1}" min="1" max="999">
-    
-            <label for="frequency-${formGroupCount + 1}">Periodicidade (em minutos):</label>
-            <input type="number" id="frequency-${formGroupCount + 1}" name="frequency-${formGroupCount + 1}" min="1" max="60">
-            
-            <button id="start-track-${formGroupCount + 1}" class="btn btn-success">Iniciar</button>
-            <button id="stop-track-${formGroupCount + 1}" class="btn btn-danger">Parar</button>
+        <div class="card mb-3 custom-card">
+            <div class="form-group row" id="${newFormGroupId}">
 
-            <label for="track-id-${formGroupCount + 1}">ID:</label>
-            <input id="track-id-${formGroupCount + 1}" class="form-control" name="track-id-${formGroupCount + 1}" type="text" placeholder="Aguardando início..." readonly />
+                <label for="ticker-select-${formGroupCount + 1}" class="custom-label">Ativos:</label>
+                <select name="ticker-select-${formGroupCount + 1}" id="ticker-select-${formGroupCount + 1}" class="form-control custom-select" form="track-data"></select>
+                
+                <label for="min-value-${formGroupCount + 1}" class="custom-label">Valor Mínimo:</label>
+                <input type="number" id="min-value-${formGroupCount + 1}" class="form-control custom-input" name="min-value-${formGroupCount + 1}" min="1" max="999">
+                
+                <label for="max-value-${formGroupCount + 1}" class="custom-label">Valor Máximo:</label>
+                <input type="number" id="max-value-${formGroupCount + 1}" class="form-control custom-input" name="max-value-${formGroupCount + 1}" min="1" max="999">
+        
+                <label for="frequency-${formGroupCount + 1}" class="custom-label">Periodicidade (em minutos):</label>
+                <input type="number" id="frequency-${formGroupCount + 1}" class="form-control custom-input" name="frequency-${formGroupCount + 1}" min="1" max="60">
+                
+                <button id="start-track-${formGroupCount + 1}" class="btn btn-success custom-form-start-button">Iniciar</button>
+                <button id="stop-track-${formGroupCount + 1}" class="btn btn-danger custom-form-stop-button">Parar</button>
+
+                <label for="track-id-${formGroupCount + 1}" class="custom-label">ID:</label>
+                <input id="track-id-${formGroupCount + 1}" class="form-control custom-input-readonly" name="track-id-${formGroupCount + 1}" type="text" placeholder="Aguardando início..." readonly />
+            </div>
         </div>
     `);
 
@@ -179,9 +184,9 @@ $("#track-data").on("click", "[id^=start-track-]", function(event) {
         alert(`
             Insira valores válidos:
             * É necessário informar um email
-            * Preço mínimo: 1 até 999
-            * Preço máximo: 1 até 999
-            * Periodicidade: 1 até 60
+            * Preço mínimo: 0 até 9999
+            * Preço máximo: 0 até 9999
+            * Periodicidade: 0.5 até 60
             * Preço máximo maior do que o mínimo
         `);
     }

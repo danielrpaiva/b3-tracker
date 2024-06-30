@@ -17,7 +17,7 @@ class TrackOrder(BaseModel):
     task_id = models.CharField(max_length=255, unique=True) # id da task no celery
     buy_limit = models.DecimalField(max_digits=10, decimal_places=2) # limite inferior do tunel (limiar de compra)
     sell_limit = models.DecimalField(max_digits=10, decimal_places=2) # limite superior do tunel (limiar de venda)
-    frequency = models.DecimalField(max_digits=3, decimal_places=2) # frequencia em minutos
+    frequency = models.DecimalField(max_digits=4, decimal_places=2) # frequencia em minutos
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
