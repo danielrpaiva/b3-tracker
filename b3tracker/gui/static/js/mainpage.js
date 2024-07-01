@@ -65,10 +65,11 @@ $(document).ready(() => {
 $("#get-history").click(() => {
 
     const email = $("#email-input").val();
+    const ticker = $("#search-ticker").val();
 
     if (validateEmail(email)) {
         $.ajax({
-            url: `/api/trackers?email=${email}`,
+            url: `/api/trackers?email=${email}&ticker=${ticker}`,
             type: "GET",
             success: (response) => {
                 

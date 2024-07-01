@@ -18,6 +18,15 @@ body {
     margin-left: 5px;
 }
 
+.custom-input-2 {
+    display: inline;
+    width: 300px;
+    margin-right: 10px;
+    margin-left: 5px;
+    margin-left: 50px;
+    margin-top: 50px;
+}
+
 .custom-select {
     width: 150px;
     margin-right: 25px;
@@ -55,11 +64,6 @@ body {
 .custom-add-button {
     margin-left: 50px;
     margin-bottom: 2px;
-}
-
-.custom-history-button {
-    margin-top: 40px;
-    margin-left: 50px;
 }
 
 #email-input {

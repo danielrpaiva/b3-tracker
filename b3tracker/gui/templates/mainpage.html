@@ -19,13 +19,14 @@
     
     <div class="custom-instructions">
         <h5>Instruções:</h5>
-        1. Selecione o ativo que deseja monitorar <br>
-        2. Preencha os valores de preço mínimo, máximo e periodicidade do monitoramento <br>
-        3. Aperte o botão "Iniciar" para começar a monitorar <br>
-        4. Aperte o botão "Parar" para cancelar o monitoramento <br>
-        5. Para monitorar vários ativos basta apertar o botão "Adicionar ativo", preencher seus campos e iniciar <br>
-        6. Para buscar/atualizar todos os preços já buscados pelo email selecionado aperte o botão "Atualizar histórico"<br>
-        
+        1. Digite o seu email <br>
+        2. Selecione o ativo que deseja monitorar <br>
+        3. Preencha os valores de preço mínimo, máximo e periodicidade do monitoramento <br>
+        4. Aperte o botão "Iniciar" para começar a monitorar <br>
+        5. Aperte o botão "Parar" para cancelar o monitoramento <br>
+        6. Para monitorar vários ativos basta apertar o botão "Adicionar ativo", preencher seus campos e iniciar <br>
+        7. Para buscar/atualizar todos os preços já buscados pelo email selecionado aperte o botão "Atualizar histórico"<br>
+        8. (OPCIONAL) Caso deseje pesquisar por código do ativo basta preencher o seu nome e apertar "Atualizar histórico" novamente<br>
         <br>
 
         <h5>Digite o seu email para iniciar:</h5>
@@ -66,6 +67,7 @@
 
     <br>
     
+    <input type="text" id="search-ticker" class="form-control custom-input-2" name="search-ticker" placeholder="Digite o código, ex: PETR3">
     <button id="get-history" class="btn btn-primary custom-history-button">Atualizar histórico</button>
 
     <table class="table table-striped custom-table" id="tracker-history-table">
