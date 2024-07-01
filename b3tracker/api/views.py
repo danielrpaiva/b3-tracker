@@ -78,13 +78,13 @@ class TrackerView(APIView):
             curr_order_quotes = OrderQuote.objects.all()
 
             if email_param:
-                curr_order_quotes = curr_order_quotes.filter(track_order__requester_email=email_param)
+                curr_order_quotes = curr_order_quotes.filter(track_order__requester_email__icontains=email_param)
             
             if ticker_param:
-                curr_order_quotes = curr_order_quotes.filter(track_order__ticker_code=ticker_param)
+                curr_order_quotes = curr_order_quotes.filter(track_order__ticker_code__icontains=ticker_param)
             
             if task_id_param:
-                curr_order_quotes = curr_order_quotes.filter(track_order__task_id=task_id_param)
+                curr_order_quotes = curr_order_quotes.filter(track_order__task_id__icontains=task_id_param)
 
             if min_price_param:
                 curr_order_quotes = curr_order_quotes.filter(quote_price__gte=min_price_param)
